@@ -1,54 +1,32 @@
 # 🪪 Deteksi Kualitas Blur KTP Indonesia
 
-Aplikasi web untuk mendeteksi kualitas blur pada foto KTP Indonesia menggunakan **metode Laplacian Variance** dengan deteksi ROI (Region of Interest) otomatis.
+Aplikasi web untuk mendeteksi kualitas ketajaman foto KTP Indonesia menggunakan analisis **Kepadatan Teks (Morfologi)** dan **Frekuensi Tinggi (FFT)**.
 
 ## 📋 Alur Kerja
 
 ```
-Upload Foto KTP → Validasi Format → Deteksi ROI → Pra-pemrosesan → Filter Laplacian → Hitung Variance → Normalisasi → Klasifikasi
+Upload Foto KTP → Crop Area Teks → Bilateral Filter → Adaptive Thresholding → Morphological Opening → Contour & FFT Analysis → Klasifikasi
 ```
 
-1. **Input foto KTP** — Pengguna mengunggah foto KTP (format: JPG, PNG, WEBP)
-2. **Validasi format** — Sistem memeriksa ekstensi file
-3. **Deteksi ROI** — Sistem mendeteksi area KTP pada gambar (3 metode)
-4. **Pra-pemrosesan** — ROI di-resize + konversi ke grayscale
-5. **Filter Laplacian** — Kernel 3×3 diterapkan pada ROI untuk mendeteksi tepi
-6. **Hitung Variance (σ²)** — Variance dari respons Laplacian dihitung
-7. **Normalisasi** — Konversi ke skala 0–100%
-8. **Klasifikasi** — Tajam, Sedikit Blur, atau Blur
+1. **Input Foto KTP** — Pengguna mengunggah foto KTP (format: JPG, PNG, WEBP, BMP).
+2. **Seleksi Area Teks (Crop)** — Pengguna secara manual memilih area teks pada KTP (menghindari pas foto dan latar belakang) untuk analisis yang presisi.
+3. **Bilateral Filter** — Meredam noise kompresi secara agresif sembari mempertahankan ketajaman tepi huruf.
+4. **Adaptive Thresholding** — Melakukan binarisasi untuk memisahkan teks dari latar belakang KTP secara lokal.
+5. **Morphological Opening** — Menghapus bintik-bintik noise (kotoran) menggunakan kernel 3x3 agar hanya menyisakan karakter teks yang solid.
+6. **Contour Analysis (Text Density)** — Menghitung jumlah kontur karakter yang valid berdasarkan aturan proporsi dan ukuran huruf KTP.
+7. **Frequency Analysis (FFT)** — Menggunakan Transformasi Fourier Cepat (Fast Fourier Transform) untuk mengukur rasio energi frekuensi tinggi yang menandakan ketajaman citra.
+8. **Klasifikasi** — Skor diakumulasi (50% Morfologi + 50% FFT) untuk menentukan kualitas: Sangat Baik, Baik, Cukup, atau Kurang.
 
-## 🎯 Metode Deteksi ROI
+## 🧮 Sistem Penilaian
 
-Aplikasi mendukung 3 metode untuk mendeteksi area KTP sebelum analisis blur:
+Skor akhir dihitung dalam rentang **0 hingga 100**, yang dibagi menjadi 4 kategori:
 
-### 1. Deteksi Dokumen (Kontur)
-- Menggunakan **Canny edge detection** + **contour detection** dari OpenCV
-- Mencari kontur terbesar berbentuk persegi panjang (4 sisi)
-- Otomatis crop pada area kontur KTP yang terdeteksi
-- Jika gagal, fallback ke Center Crop
-
-### 2. Deteksi Wajah (Haar Cascade)
-- Menggunakan **Haar Cascade Classifier** (`haarcascade_frontalface_default.xml`)
-- KTP selalu memiliki pas foto — wajah yang blur = KTP blur
-- Mengambil bounding box wajah + padding 30% untuk konteks
-- Jika wajah tidak terdeteksi, fallback ke Center Crop
-
-### 3. Center Crop (Cara Instan)
-- Memotong **40% area tengah** gambar secara statis
-- Asumsi: pengguna menempatkan KTP di tengah frame
-- Tidak memerlukan machine learning
-
-## 🧮 Formula
-
-```
-blur% = 100 − min(σ² / threshold × 100, 100)
-```
-
-| Kondisi | Status |
-|---------|--------|
-| σ² ≥ threshold | ✅ Tajam |
-| threshold/2 ≤ σ² < threshold | ⚠️ Sedikit Blur |
-| σ² < threshold/2 | ❌ Blur |
+| Skor Akhir | Status Kualitas | Rekomendasi |
+|------------|-----------------|-------------|
+| **≥ 70**   | ✅ Sangat Baik (Tajam) | Foto KTP sangat jelas, tulisan terbaca sempurna! |
+| **45 - 69**| 🟢 Baik (Cukup Jelas) | Foto cukup baik dan layak digunakan. |
+| **25 - 44**| ⚠️ Cukup (Agak Blur) | KTP agak buram atau berisik. Disarankan foto ulang. |
+| **< 25**   | ❌ Kurang (Blur Parah) | Foto tidak layak! Karakter tulisan rusak atau tidak terdeteksi. |
 
 ## 🚀 Instalasi & Menjalankan
 
@@ -60,35 +38,23 @@ pip install -r requirements.txt
 streamlit run app.py
 ```
 
-Aplikasi akan terbuka di browser pada `http://localhost:8501`
+Aplikasi akan terbuka di browser pada `http://localhost:8501` (atau port Streamlit yang tersedia).
 
 ## 📁 Struktur Proyek
 
 ```
 DeteksiBlurKTP_PCD/
-├── app.py              # Aplikasi web Streamlit (UI + visualisasi)
-├── blur_detector.py    # Modul deteksi blur + ROI (Laplacian)
-├── requirements.txt    # Dependencies Python
-└── README.md           # Dokumentasi
+├── app.py              # Antarmuka web Streamlit (UI + Integrasi Cropper)
+├── blur_detector.py    # Logika inti Pemrosesan Citra Digital (Morfologi & FFT)
+├── requirements.txt    # Daftar dependensi Python
+└── README.md           # Dokumentasi proyek
 ```
 
-## 🛠️ Teknologi
+## 🛠️ Teknologi & Pustaka Utama
 
 - **Python 3.10+**
-- **OpenCV** — Pemrosesan citra, filter Laplacian, Haar Cascade, contour detection
-- **NumPy** — Komputasi numerik
-- **Pillow** — Manipulasi gambar
-- **Streamlit** — Antarmuka web
-
-## 📖 Metode Laplacian
-
-Filter Laplacian menghitung turunan kedua dari intensitas piksel. Kernel 3×3 yang digunakan:
-
-```
-[ 0,  1,  0]
-[ 1, -4,  1]
-[ 0,  1,  0]
-```
-
-- **Gambar tajam** → banyak perubahan intensitas → variance tinggi
-- **Gambar blur** → transisi halus → variance rendah
+- **OpenCV (`cv2`)** — Filter bilateral, thresholding, operasi morfologi, dan pencarian kontur.
+- **NumPy** — Komputasi matriks dan analisis domain frekuensi (FFT).
+- **Streamlit** — Framework pembuatan antarmuka web interaktif.
+- **streamlit-cropper** — Komponen antarmuka untuk melakukan *cropping* gambar secara langsung di peramban.
+- **Pillow** — Manipulasi format citra.
