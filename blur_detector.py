@@ -1,20 +1,17 @@
-"""
-Modul Deteksi Blur pada Gambar KTP Indonesia
-Menggunakan Metode Kepadatan Teks (Morfologi) & Frekuensi (FFT)
-Versi: Dynamic Sizing & Noise Resistant
-"""
-
 import cv2
 import numpy as np
 
 def hitung_skor_blur(img_gray: np.ndarray) -> dict:
-    """
-    Menghitung skor blur berdasarkan kepadatan teks dan spektrum frekuensi tinggi.
-    Idealnya, img_gray adalah potongan gambar KTP yang berisi area teks.
-    """
+    # Ambil tinggi dan lebar gambar
     h, w = img_gray.shape[:2]
     
-    # 1. BORDER SLICING: Potong 15 piksel luar agar garis potong crop tidak ikut dihitung
+    # Resize jika tinggi gambar kurang dari 80 piksel
+    if h < 80:
+        scale = 80 / h
+        img_gray = cv2.resize(img_gray, (int(w * scale), int(h * scale)), interpolation=cv2.INTER_CUBIC)
+        h, w = img_gray.shape[:2]
+    
+    # Potong 15 piksel luar agar garis potong crop tidak ikut dihitung
     if h > 40 and w > 40:
         img_inner = img_gray[15:h-15, 15:w-15]
     else:
@@ -28,9 +25,19 @@ def hitung_skor_blur(img_gray: np.ndarray) -> dict:
     img_filtered = cv2.bilateralFilter(img_inner, 9, 75, 75)
 
     # 3. ADAPTIVE THRESHOLDING: Segmentasi teks lokal
+    # # Adaptive/Dynamic Block Size
+    dynamic_block_size = int(h_inner*0.08)
+    
+    if dynamic_block_size % 2 == 0:
+        dynamic_block_size += 1
+    
+    # minimal 11 agar tidak terlalu hancur pada gambar resolusi sangat rendah
+    dynamic_block_size = max(11, dynamic_block_size)
+    
+    # Dynamic Thresholding
     thresh = cv2.adaptiveThreshold(
         img_filtered, 255, cv2.ADAPTIVE_THRESH_GAUSSIAN_C, 
-        cv2.THRESH_BINARY_INV, 11, 2
+        cv2.THRESH_BINARY_INV, dynamic_block_size, 2
     )
     
     # 4. MORPHOLOGICAL OPERATIONS: Menghapus Bintik Noise
