@@ -114,7 +114,7 @@ def hitung_skor_blur(img_gray: np.ndarray) -> dict:
         "rekomendasi": rekomendasi,
         "rincian": f"Clean_Text: {round(score_text,1)} | FFT_Domain: {round(score_fft,1)}",
         "thresh_cleaned": thresh_cleaned, 
-        "img_inner": img_inner 
+        "img_inner": img_filtered,
     }
 
 def validate_file_extension(filename: str) -> bool:

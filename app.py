@@ -287,13 +287,11 @@ if uploaded_file is not None:
             st.markdown('<div class="fancy-divider"></div>', unsafe_allow_html=True)
             st.markdown("### 📊 Hasil Analisis")
 
-            col1, col2, col3 = st.columns(3)
+            col1, col2= st.columns(2)
             with col1:
                 render_metric("Skor Fokus", f"{hasil['score']} / 100", sub="Total Skor PCD", color=hasil['warna'])
             with col2:
                 render_metric("Kualitas", hasil['kualitas'], sub="Kategori", color=hasil['warna'])
-            with col3:
-                render_metric("Rekomendasi", "Lihat di bawah", sub=hasil['rincian'])
 
             st.markdown(f"""
             <div style="background-color: {hasil['warna']}20; border-left: 5px solid {hasil['warna']}; padding: 15px; border-radius: 5px; margin-top: 15px;">
@@ -306,14 +304,16 @@ if uploaded_file is not None:
             
             # Visualisasi
             st.markdown("### 🖼️ Visualisasi Proses Morfologi")
-            tab1, tab2, tab3 = st.tabs(["✂️ Crop Citra (Grayscale)", "🔘 Pre-processing (Bilateral Filter)", "🔠 Threshold & Cleaning (Kontur)"])
+            tab1, tab2, tab3, tab4 = st.tabs(["✂️ Crop Citra","Grayscale Mode", "🔘 Pre-processing (Bilateral Filter)", "🔠 Threshold Cleaning"])
             
             with tab1:
-                st.image(img_gray, caption="Potongan Citra Input", width=600, channels="GRAY")
+                st.image(cropped_img, caption="Crop Citra", width=600, channels="RGB")
             with tab2:
-                st.image(hasil["img_inner"], caption="Border Slicing & Area Dalam", width=600, channels="GRAY")
+                st.image(img_gray, caption="Grayscale Mode", width=600, channels="GRAY")
             with tab3:
-                st.image(hasil["thresh_cleaned"], caption="Hasil Segmentasi Teks (Bintik Dihapus)", width=600, channels="GRAY")
+                st.image(hasil["img_inner"], caption="Pre-processing (Bilateral Filter)", width=600, channels="GRAY")
+            with tab4:
+                st.image(hasil["thresh_cleaned"], caption="Threshold Cleaning", width=600, channels="GRAY")
 
 
 
