@@ -21,7 +21,6 @@ st.markdown("""
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&family=Inter:wght@400;500;600&display=swap');
 
-/* Main Background and Text */
 html, body, [class*="css"] { 
     font-family: 'Inter', sans-serif !important; 
     color: #e2e8f0;
@@ -32,7 +31,6 @@ h1, h2, h3, h4, h5, h6, .metric-value {
     font-family: 'Outfit', sans-serif !important;
 }
 
-/* Glassmorphism Header */
 .main-header {
     background: rgba(17, 24, 39, 0.6);
     backdrop-filter: blur(16px);
@@ -47,7 +45,6 @@ h1, h2, h3, h4, h5, h6, .metric-value {
     overflow: hidden;
 }
 
-/* Wind/Glow effect in header */
 .main-header::before {
     content: '';
     position: absolute;
@@ -79,7 +76,6 @@ h1, h2, h3, h4, h5, h6, .metric-value {
     margin: 0; 
 }
 
-/* Glassmorphism Metric Cards */
 .metric-card {
     background: rgba(30, 41, 59, 0.4);
     backdrop-filter: blur(12px);
@@ -116,7 +112,6 @@ h1, h2, h3, h4, h5, h6, .metric-value {
     font-weight: 400;
 }
 
-/* Neumorphic Info Box */
 .info-box {
     background: linear-gradient(145deg, #1e293b, #0f172a);
     border-left: 4px solid #6366f1;
@@ -129,7 +124,6 @@ h1, h2, h3, h4, h5, h6, .metric-value {
     box-shadow: 5px 5px 15px rgba(0,0,0,0.3);
 }
 
-/* Upload Area */
 [data-testid="stFileUploader"] { 
     border: 2px dashed rgba(99, 102, 241, 0.4); 
     background: rgba(30, 41, 59, 0.3);
@@ -143,7 +137,6 @@ h1, h2, h3, h4, h5, h6, .metric-value {
     box-shadow: 0 0 20px rgba(99, 102, 241, 0.15);
 }
 
-/* Fancy Divider */
 .fancy-divider { 
     height: 1px; 
     background: linear-gradient(90deg, transparent, rgba(99,102,241,0.5), transparent); 
@@ -151,7 +144,6 @@ h1, h2, h3, h4, h5, h6, .metric-value {
     margin: 3rem 0; 
 }
 
-/* Sleek Steps */
 .classic-step {
     background: rgba(15, 23, 42, 0.6);
     backdrop-filter: blur(8px);
@@ -178,7 +170,6 @@ h1, h2, h3, h4, h5, h6, .metric-value {
     line-height: 1.5; 
 }
 
-/* Custom Buttons */
 .stButton>button {
     background: linear-gradient(135deg, #6366f1, #4f46e5);
     color: white;
@@ -197,7 +188,6 @@ h1, h2, h3, h4, h5, h6, .metric-value {
 </style>
 """, unsafe_allow_html=True)
 
-
 def render_metric(label, value, sub="", color="white"):
     st.markdown(f"""
     <div class="metric-card">
@@ -214,6 +204,7 @@ st.markdown("""
     <p>Analisis Kepadatan Teks (Morfologi) & Frekuensi (FFT)</p>
 </div>""", unsafe_allow_html=True)
 
+
 # ── Sidebar ──
 with st.sidebar:
     st.markdown("### 📖 Cara Kerja")
@@ -226,7 +217,7 @@ with st.sidebar:
 
     steps = [
         ("1️⃣ Upload Foto", "Unggah foto KTP (JPG, PNG, WEBP, BMP)."),
-        ("2️⃣ Crop Teks", "Seleksi kotak area teks."),
+        ("2️⃣ Crop KTP", "Seleksi kotak area KTP."),
         ("3️⃣ Pre-Processing", "Bilateral Filter & Adaptive Thresholding."),
         ("4️⃣ Morfologi", "Operasi Morphological Opening untuk hapus noise."),
         ("5️⃣ Contour & FFT", "Hitung kepadatan teks dinamis dan frekuensi tinggi."),
@@ -240,83 +231,102 @@ with st.sidebar:
         </div>""", unsafe_allow_html=True)
 
 
-# ── Upload & Crop Area (Satu Baris) ──
-col_upload, col_crop = st.columns([1, 1], gap="large")
+# ── Manajemen State Layout Dinamis ──
+# Menyimpan status apakah tombol analisis sudah ditekan atau belum
+if 'show_results' not in st.session_state:
+    st.session_state.show_results = False
 
-with col_upload:
+# ── Penentuan Layout ──
+# Jika show_results True -> Layar membelah jadi 2 kolom
+# Jika show_results False -> Hanya 1 container (lebar penuh)
+if st.session_state.show_results:
+    col_left, col_right = st.columns([1, 1], gap="large")
+else:
+    col_left = st.container()
+    col_right = None
+
+
+# ── Render Kolom Kiri (Upload & Crop) ──
+with col_left:
     st.markdown("### 📤 Upload Foto KTP")
     uploaded_file = st.file_uploader(
         "Pilih file gambar KTP", type=["jpg", "jpeg", "png", "webp", "bmp"],
         help="Format: JPG, PNG, WEBP, BMP", label_visibility="collapsed",
     )
     
+    # Reset status layout jika foto dihapus/belum ada
     if uploaded_file is None:
+        st.session_state.show_results = False
         st.markdown("""
         <div style="background: rgba(30, 41, 59, 0.4); border: 2px dashed rgba(99, 102, 241, 0.4); padding: 3rem 1.5rem; text-align: center; margin-top: 1rem; border-radius: 20px; backdrop-filter: blur(12px);">
             <p style="font-size: 3rem; margin: 0; filter: drop-shadow(0 0 10px rgba(99,102,241,0.5));">🪪</p>
             <p style="color: #e0e7ff; font-size: 1.1rem; font-weight: 600; margin: 1rem 0 0.5rem; letter-spacing: 0.5px;">Belum ada foto yang diunggah</p>
             <p style="color: #94a3b8; font-size: 0.85rem; margin: 0;">Silakan unggah foto di atas</p>
         </div>""", unsafe_allow_html=True)
-
-if uploaded_file is not None:
-    if not validate_file_extension(uploaded_file.name):
-        with col_upload:
-            st.error("❌ **Format file tidak valid!** Hanya JPG, PNG, WEBP, BMP.")
-        st.stop()
-
-    pil_image = Image.open(uploaded_file).convert("RGB")
     
-    with col_crop:
-        st.markdown("### ✂️ Seleksi Area Teks")
-        st.info("💡 **Petunjuk:** Geser kotak di bawah untuk menyeleksi **area teks KTP**. Hindari latar belakang luar agar akurat.")
+    else:
+        if not validate_file_extension(uploaded_file.name):
+            st.error("❌ **Format file tidak valid!** Hanya JPG, PNG, WEBP, BMP.")
+            st.stop()
+
+        pil_image = Image.open(uploaded_file).convert("RGB")
         
-        # st_cropper returns the cropped PIL Image
+        st.markdown("### ✂️ Seleksi Area KTP")
+        st.info("💡 **Petunjuk:** Geser kotak di bawah untuk menyeleksi **area KTP**.")
+        
+        # St_cropper
         cropped_img = st_cropper(pil_image, realtime_update=True, box_color='#00FF00', aspect_ratio=None)
         
-        analyze_clicked = st.button("🔍 Analisis Potongan KTP", type="primary", use_container_width=True)
-    
-    if analyze_clicked:
+        # Tombol Analisis: Mengubah state layout dan memaksa aplikasi memuat ulang (rerun)
+        if not st.session_state.show_results:
+            if st.button("🔍 Analisis Potongan KTP", type="primary", use_container_width=True):
+                st.session_state.show_results = True
+                st.rerun()
+
+
+# ── Render Kolom Kanan (Hasil Analisis & Visualisasi) ──
+# Kolom kanan hanya dieksekusi jika layout sudah membelah dan col_right ada
+if st.session_state.show_results and col_right is not None:
+    with col_right:
         with st.spinner("Menganalisis kepadatan teks dan frekuensi..."):
-            # Konversi PIL ke OpenCV Grayscale
+            
+            # Proses gambar (Sistem akan memproses real-time setiap kali kotak cropper di kolom kiri digeser)
             img_cv = np.array(cropped_img)
             img_gray = cv2.cvtColor(img_cv, cv2.COLOR_RGB2GRAY)
             
-            # Hitung skor blur menggunakan fungsi PCD yang baru
+            # Hitung skor blur
             hasil = hitung_skor_blur(img_gray)
             
-            st.markdown('<div class="fancy-divider"></div>', unsafe_allow_html=True)
             st.markdown("### 📊 Hasil Analisis")
 
-            col1, col2= st.columns(2)
-            with col1:
+            col_metric1, col_metric2 = st.columns(2)
+            with col_metric1:
                 render_metric("Skor Fokus", f"{hasil['score']} / 100", sub="Total Skor PCD", color=hasil['warna'])
-            with col2:
+            with col_metric2:
                 render_metric("Kualitas", hasil['kualitas'], sub="Kategori", color=hasil['warna'])
 
             st.markdown(f"""
-            <div style="background-color: {hasil['warna']}20; border-left: 5px solid {hasil['warna']}; padding: 15px; border-radius: 5px; margin-top: 15px;">
+            <div style="background-color: {hasil['warna']}20; border-left: 5px solid {hasil['warna']}; padding: 15px; border-radius: 5px; margin-top: 15px; margin-bottom: 30px;">
                 <h4 style="margin: 0; color: {hasil['warna']};">Rekomendasi Sistem:</h4>
                 <p style="margin: 5px 0 0 0; color: #cbd5e1; font-size: 1.1rem;">{hasil['rekomendasi']}</p>
             </div>
             """, unsafe_allow_html=True)
-
-            st.markdown('<div class="fancy-divider"></div>', unsafe_allow_html=True)
             
-            # Visualisasi
+            # Visualisasi Tab
             st.markdown("### 🖼️ Visualisasi Proses Morfologi")
-            tab1, tab2, tab3, tab4 = st.tabs(["✂️ Crop Citra","Grayscale Mode", "🔘 Pre-processing (Bilateral Filter)", "🔠 Threshold Cleaning"])
+            tab1, tab2, tab3, tab4 = st.tabs(["✂️ Crop Citra", "Grayscale Mode", "🔘 Pre-processing", "🔠 Threshold Cleaning"])
             
             with tab1:
-                st.image(cropped_img, caption="Crop Citra", width=600, channels="RGB")
+                st.image(cropped_img, caption="Crop Citra", use_container_width=True, channels="RGB")
             with tab2:
-                st.image(img_gray, caption="Grayscale Mode", width=600, channels="GRAY")
+                st.image(img_gray, caption="Grayscale Mode", use_container_width=True, channels="GRAY")
             with tab3:
-                st.image(hasil["img_inner"], caption="Pre-processing (Bilateral Filter)", width=600, channels="GRAY")
+                st.image(hasil["img_inner"], caption="Pre-processing (Bilateral Filter)", use_container_width=True, channels="GRAY")
             with tab4:
-                st.image(hasil["thresh_cleaned"], caption="Threshold Cleaning", width=600, channels="GRAY")
+                st.image(hasil["thresh_cleaned"], caption="Threshold Cleaning", use_container_width=True, channels="GRAY")
 
 
-
+# ── Footer ──
 st.markdown("<br><br>", unsafe_allow_html=True)
 st.markdown("""
 <div style="text-align:center; color: #475569; font-size: 0.8rem; font-weight: 500; padding: 1.5rem 0; border-top: 1px solid rgba(255,255,255,0.05); letter-spacing: 1px;">
