@@ -32,7 +32,7 @@ def hitung_skor_blur(img_gray: np.ndarray) -> dict:
         dynamic_block_size += 1
     
     # minimal 11 agar tidak terlalu hancur pada gambar resolusi sangat rendah
-    dynamic_block_size = max(11, dynamic_block_size)
+    dynamic_block_size = max(3, dynamic_block_size)
     
     # Dynamic Thresholding
     thresh = cv2.adaptiveThreshold(
@@ -50,7 +50,7 @@ def hitung_skor_blur(img_gray: np.ndarray) -> dict:
     
     # DYNAMIC SIZING: Hitung batas ukuran huruf berdasarkan tinggi potongan gambar
     # Huruf KTP biasanya memakan 2% hingga 25% dari tinggi area yang di-crop
-    min_h = max(5, int(h_inner * 0.02))  
+    min_h = max(8, int(h_inner * 0.02))  
     max_h = max(10, int(h_inner * 0.25)) 
     
     valid_text_contours = 0
@@ -66,12 +66,12 @@ def hitung_skor_blur(img_gray: np.ndarray) -> dict:
                 # Filter Extent (Kepadatan Area) - Mencegah bintik noise lolos
                 # Teks asli umumnya mengisi 20% - 80% dari kotak bounding box-nya
                 extent = area / float(cw * ch) if (cw * ch) > 0 else 0
-                if 0.2 <= extent <= 0.8:
+                if 0.2 <= extent <= 0.65:
                     valid_text_contours += 1
 
     # Normalisasi skor Kepadatan Teks (Text Density)
     score_text = min(100.0, (valid_text_contours / 80.0) * 100)
-    score_text = 100 / (1 + np.exp(-0.12 * (score_text - 45)))
+    score_text = 100 / (1 + np.exp(-0.12 * (score_text - 55)))
 
     # 6. FREQUENCY ANALYSIS (FFT): Analisis komponen frekuensi tinggi pendamping
     f_transform = np.fft.fft2(img_inner.astype(np.float64))
@@ -91,7 +91,7 @@ def hitung_skor_blur(img_gray: np.ndarray) -> dict:
     high_freq_ratio = (high_freq_energy / total_energy * 100) if total_energy > 0 else 0
     
     score_fft = min(100.0, (high_freq_ratio / 1.8) * 100)
-    score_fft = 100 / (1 + np.exp(-0.15 * (score_fft - 45)))
+    score_fft = 100 / (1 + np.exp(-0.15 * (score_fft - 55)))
 
     # 7. BOBOT AKHIR: 50% Text Density + 50% FFT Frekuensi
     final_score = (0.50 * score_text) + (0.50 * score_fft)
