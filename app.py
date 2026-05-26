@@ -12,38 +12,40 @@ from blur_detector import (
 
 st.set_page_config(
     page_title="Angin Tak Punya KTP Pro",
-    page_icon="✨",
+    page_icon="🪪",
     layout="wide",
     initial_sidebar_state="collapsed", 
 )
 
-# ── Custom Cheerful & Bright Dashboard CSS ──
+# ── Custom Futuristic Dark Dashboard CSS ──
 st.markdown("""
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&family=Outfit:wght@400;600;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&family=Inter:wght@400;500;600;700&display=swap');
 
-/* Force Light Mode Background for the whole app */
+/* Force Dark Mode Background for the whole app */
 [data-testid="stAppViewContainer"], .stApp {
-    background-color: #F4F7FE !important; /* Soft airy blue/grey */
+    background-color: #080c14 !important; /* Deep dark space color */
 }
 
 html, body, [class*="css"] { 
-    font-family: 'Nunito', sans-serif !important; 
-    color: #334155; /* Dark slate for readable text */
+    font-family: 'Inter', sans-serif !important; 
+    color: #e2e8f0; /* Light slate for readable text */
 }
 
 h1, h2, h3, h4, h5, h6, .metric-value {
     font-family: 'Outfit', sans-serif !important;
 }
 
-/* Header Dashboard Ceria */
+/* Header Dashboard Gelap & Elegan */
 .db-header {
-    background: #FFFFFF;
-    border: 1px solid #E2E8F0;
+    background: linear-gradient(135deg, rgba(15, 23, 42, 0.85) 0%, rgba(30, 41, 59, 0.5) 100%);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.08);
     padding: 2.5rem 2rem; 
     border-radius: 24px;
     margin-bottom: 2rem;
-    box-shadow: 0 10px 40px rgba(112, 144, 176, 0.12); /* Soft sunny shadow */
+    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255,255,255,0.05);
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -51,29 +53,19 @@ h1, h2, h3, h4, h5, h6, .metric-value {
     overflow: hidden;
 }
 
-/* Dekorasi Lingkaran Ceria di Background Header */
+/* Efek Cahaya Halus di Background Header */
 .db-header::before {
     content: '';
     position: absolute;
-    top: -50px; right: -50px;
-    width: 200px; height: 200px;
-    background: linear-gradient(135deg, #FF9A9E 0%, #FECFEF 100%);
+    top: -50px; left: -50px;
+    width: 250px; height: 250px;
+    background: radial-gradient(circle, rgba(99,102,241,0.15) 0%, transparent 70%);
     border-radius: 50%;
-    opacity: 0.4;
-}
-
-.db-header::after {
-    content: '';
-    position: absolute;
-    bottom: -80px; right: 100px;
-    width: 150px; height: 150px;
-    background: linear-gradient(135deg, #a18cd1 0%, #fbc2eb 100%);
-    border-radius: 50%;
-    opacity: 0.3;
+    pointer-events: none;
 }
 
 .db-title h1 {
-    background: linear-gradient(90deg, #FF416C, #FF4B2B); /* Vibrant Coral to Orange */
+    background: linear-gradient(90deg, #818cf8, #c4b5fd); /* Indigo to Purple */
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     font-size: 2.8rem;
@@ -81,53 +73,57 @@ h1, h2, h3, h4, h5, h6, .metric-value {
     margin: 0;
     position: relative;
     z-index: 2;
+    letter-spacing: -0.5px;
 }
 
 .db-title p {
-    color: #64748B;
+    color: #94a3b8;
     margin: 0.3rem 0 0 0;
     font-size: 1.1rem;
-    font-weight: 600;
+    font-weight: 400;
     position: relative;
     z-index: 2;
 }
 
-/* Card Container Putih Bersih */
+/* Card Container Glassmorphism */
 .db-card {
-    background: #FFFFFF;
-    border: 1px solid #F1F5F9;
+    background: rgba(15, 23, 42, 0.4);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.05);
     border-radius: 24px;
     padding: 2rem;
     margin-bottom: 2rem;
-    box-shadow: 0 15px 35px rgba(112, 144, 176, 0.08); /* Bayangan lembut */
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+    transition: transform 0.3s ease, border-color 0.3s ease;
 }
 .db-card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 20px 40px rgba(112, 144, 176, 0.15);
+    transform: translateY(-3px);
+    border-color: rgba(99, 102, 241, 0.3);
 }
 
-/* Metric Display Segar */
+/* Metric Display Futuristik */
 .metric-grid-card {
-    background: #F8FAFC;
-    border: 2px dashed #E2E8F0;
+    background: rgba(30, 41, 59, 0.3);
+    border: 1px solid rgba(255, 255, 255, 0.03);
     border-radius: 20px;
     padding: 1.5rem;
     text-align: center;
+    box-shadow: inset 0 1px 0 rgba(255,255,255,0.02);
     transition: all 0.3s ease;
 }
 .metric-grid-card:hover {
-    background: #FFFFFF;
-    border-color: #A5B4FC;
+    background: rgba(30, 41, 59, 0.6);
+    border-color: rgba(129, 140, 248, 0.3);
     box-shadow: 0 10px 25px rgba(99, 102, 241, 0.1);
 }
 
 .metric-grid-label {
-    color: #94A3B8;
-    font-size: 0.95rem;
-    font-weight: 700;
+    color: #64748b;
+    font-size: 0.9rem;
+    font-weight: 600;
     text-transform: uppercase;
-    letter-spacing: 1px;
+    letter-spacing: 1.5px;
 }
 
 .metric-grid-value {
@@ -136,47 +132,69 @@ h1, h2, h3, h4, h5, h6, .metric-value {
     margin: 0.5rem 0;
 }
 
-/* Section Badges Imut (Pastel) */
+/* Section Badges Cyberpunk-ish */
 .section-badge {
-    background: #FFF0F0;
-    color: #FF6B6B;
-    padding: 0.5rem 1.2rem;
+    background: rgba(99, 102, 241, 0.1);
+    color: #818cf8;
+    padding: 0.4rem 1.2rem;
     border-radius: 100px;
     font-size: 0.85rem;
-    font-weight: 800;
-    letter-spacing: 0.5px;
+    font-weight: 700;
+    letter-spacing: 1px;
     display: inline-block;
     margin-bottom: 1.2rem;
-    box-shadow: 0 4px 10px rgba(255, 107, 107, 0.2);
+    border: 1px solid rgba(99, 102, 241, 0.2);
 }
 
 /* Custom File Uploader */
 [data-testid="stFileUploader"] {
-    background: #F8FAFC;
-    border: 2px dashed #4FACFE; /* Garis putus-putus biru cerah */
+    background: rgba(30, 41, 59, 0.2);
+    border: 2px dashed rgba(99, 102, 241, 0.4);
     border-radius: 20px;
     padding: 2rem;
+    transition: all 0.3s ease;
 }
 [data-testid="stFileUploader"]:hover {
-    background: #F0F9FF;
-    border-color: #00F2FE;
+    background: rgba(30, 41, 59, 0.4);
+    border-color: #818cf8;
+    box-shadow: 0 0 20px rgba(99, 102, 241, 0.15);
 }
 
-/* Tombol Biru Gradien Cerah */
+/* Tombol Biru Indigo */
 .stButton>button {
-    background: linear-gradient(135deg, #4FACFE 0%, #00F2FE 100%);
+    background: linear-gradient(135deg, #4f46e5 0%, #6366f1 100%);
     color: white;
-    border-radius: 16px;
+    border-radius: 14px;
     padding: 0.8rem 2.5rem;
-    font-weight: 800;
-    font-size: 1.1rem;
+    font-weight: 700;
+    font-size: 1.05rem;
+    letter-spacing: 0.5px;
     border: none;
-    box-shadow: 0 8px 25px rgba(0, 242, 254, 0.4);
+    box-shadow: 0 6px 20px rgba(79, 70, 229, 0.3);
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 .stButton>button:hover {
-    transform: translateY(-3px) scale(1.02);
-    box-shadow: 0 12px 30px rgba(0, 242, 254, 0.6);
+    transform: translateY(-3px);
+    box-shadow: 0 10px 25px rgba(79, 70, 229, 0.5);
+    background: linear-gradient(135deg, #6366f1 0%, #818cf8 100%);
+}
+
+/* Customizing Streamlit Tabs for Dark Mode */
+.stTabs [data-baseweb="tab-list"] {
+    gap: 24px;
+}
+.stTabs [data-baseweb="tab"] {
+    height: 50px;
+    white-space: pre-wrap;
+    background-color: transparent;
+    border-radius: 4px 4px 0px 0px;
+    gap: 1px;
+    padding-top: 10px;
+    padding-bottom: 10px;
+    color: #94a3b8;
+}
+.stTabs [aria-selected="true"] {
+    color: #e2e8f0;
 }
 </style>
 """, unsafe_allow_html=True)
@@ -186,11 +204,11 @@ h1, h2, h3, h4, h5, h6, .metric-value {
 st.markdown("""
 <div class="db-header">
     <div class="db-title">
-        <h1>✨ Angin Tak Punya KTP Pro</h1>
-        <p>Sistem Deteksi Kualitas Optik Dokumen KTP</p>
+        <h1>🪪 Angin Tak Punya KTP Pro</h1>
+        <p>Sistem Pemrosesan Citra Digital Penilai Kualitas Optik Dokumen</p>
     </div>
-    <div style="text-align: right; color: #4FACFE; font-size: 0.9rem; font-weight: 800; background: #E0F2FE; padding: 0.5rem 1rem; border-radius: 12px; z-index:2;">
-        🚀 ENGINE: v2.0-HYBRID<br>STATUS: READY
+    <div style="text-align: right; color: #818cf8; font-size: 0.85rem; font-weight: 700; background: rgba(99, 102, 241, 0.1); border: 1px solid rgba(99, 102, 241, 0.2); padding: 0.5rem 1rem; border-radius: 12px; z-index:2; letter-spacing: 0.5px;">
+        ENGINE: v2.0-HYBRID<br>STATUS: READY
     </div>
 </div>""", unsafe_allow_html=True)
 
@@ -210,7 +228,7 @@ if 'is_warped_success' not in st.session_state:
 
 # ── PANEL 1: AREA UPLOAD ──
 st.markdown('<div class="db-card">', unsafe_allow_html=True)
-st.markdown('<span class="section-badge">🌸 FASE 1</span><h3 style="color:#1E293B; margin-top:0;">📤 Unggah Dokumen KTP</h3>', unsafe_allow_html=True)
+st.markdown('<span class="section-badge">FASE 1</span><h3 style="color:#e2e8f0; margin-top:0;">📤 Unggah Dokumen KTP</h3>', unsafe_allow_html=True)
 
 uploaded_file = st.file_uploader(
     "Pilih file gambar KTP", type=["jpg", "jpeg", "png", "webp", "bmp"],
@@ -229,7 +247,7 @@ if uploaded_file is not None:
         st.session_state.current_file_name = uploaded_file.name
         st.session_state.show_results = False
         
-        with st.spinner("🤖 Mendeteksi keajaiban... mencari sudut KTP!"):
+        with st.spinner("🤖 Mengaktifkan Komputasi Spasial: Mencari koordinat KTP..."):
             st.session_state.original_image_pil = Image.open(uploaded_file).convert("RGB")
             cv_image_bgr = cv2.cvtColor(np.array(st.session_state.original_image_pil), cv2.COLOR_RGB2BGR)
             
@@ -241,31 +259,31 @@ if uploaded_file is not None:
 
     # ── PANEL 2: SHOWCASE AUTO-WARPING ──
     st.markdown('<div class="db-card">', unsafe_allow_html=True)
-    st.markdown('<span class="section-badge" style="background:#FFF9C4; color:#F57F17;">☀️ FASE 2</span><h3 style="color:#1E293B; margin-top:0;">📐 Transformasi Perspektif Otomatis</h3>', unsafe_allow_html=True)
+    st.markdown('<span class="section-badge" style="background:rgba(245, 158, 11, 0.1); color:#fbbf24; border-color:rgba(245, 158, 11, 0.2);">FASE 2</span><h3 style="color:#e2e8f0; margin-top:0;">📐 Transformasi Perspektif Otomatis</h3>', unsafe_allow_html=True)
     
     if st.session_state.is_warped_success:
-        st.success("🎉 Yeay! Algoritma berhasil menemukan 4 sudut KTP dan meratakannya secara ajaib!")
+        st.success("✨ Algoritma Berhasil! 4 Sudut eksternal terdeteksi. Perspektif citra telah diratakan secara geometri.")
     else:
-        st.info("💡 Hmm, batas luar KTP kurang jelas. Tidak apa-apa, kita gunakan gambar aslinya saja ya!")
+        st.info("⚠️ Batas luar KTP tidak terdeteksi secara utuh. Sistem beralih menggunakan citra asli.")
 
     col_before, col_after = st.columns(2, gap="medium")
     with col_before:
         st.image(st.session_state.original_image_pil, caption="📸 Citra Asli (Input)", use_container_width=True)
     with col_after:
-        st.image(st.session_state.warped_image_pil, caption="🖥️ Citra Hasil Diratakan (Auto-Warped)", use_container_width=True)
+        st.image(st.session_state.warped_image_pil, caption="🖥️ Citra Hasil Perspektif (Auto-Warped)", use_container_width=True)
     st.markdown('</div>', unsafe_allow_html=True)
 
 
     # ── PANEL 3: INTERACTIVE CANVAS WORKSPACE ──
     st.markdown('<div class="db-card">', unsafe_allow_html=True)
-    st.markdown('<span class="section-badge" style="background:#E3F2FD; color:#1E88E5;">🌊 FASE 3</span><h3 style="color:#1E293B; margin-top:0;">✂️ Area Seleksi Interaktif</h3>', unsafe_allow_html=True)
-    st.info("💡 **Tips:** Geser kotak hijau ceria di bawah ini untuk mengurung teks yang ingin dianalisis.")
+    st.markdown('<span class="section-badge" style="background:rgba(14, 165, 233, 0.1); color:#38bdf8; border-color:rgba(14, 165, 233, 0.2);">FASE 3</span><h3 style="color:#e2e8f0; margin-top:0;">✂️ Area Seleksi Teks Interaktif</h3>', unsafe_allow_html=True)
+    st.info("💡 **Perintah Operasional:** Geser kotak *cropper* hijau di bawah ini khusus untuk menyeleksi blok teks karakter.")
     
     cropped_img = st_cropper(st.session_state.warped_image_pil, realtime_update=True, box_color='#00FF00', aspect_ratio=None)
     
     st.markdown("<br>", unsafe_allow_html=True)
     if not st.session_state.show_results:
-        if st.button("🚀 EKSTRAKSI SEKARANG", type="primary", use_container_width=True):
+        if st.button("🚀 EKSEKUSI ANALISIS", type="primary", use_container_width=True):
             st.session_state.show_results = True
             st.rerun()
     st.markdown('</div>', unsafe_allow_html=True)
@@ -273,8 +291,8 @@ if uploaded_file is not None:
 
     # ── PANEL 4: PERFORMANCE & ANALYTICS DASHBOARD ──
     if st.session_state.show_results:
-        st.markdown('<div class="db-card" style="border-top: 6px solid #4FACFE;">', unsafe_allow_html=True)
-        st.markdown('<span class="section-badge" style="background:#E8F5E9; color:#43A047;">🍀 FASE 4</span><h3 style="color:#1E293B; margin-top:0;">📊 Dashboard Kualitas Optik</h3>', unsafe_allow_html=True)
+        st.markdown('<div class="db-card" style="border-top: 4px solid #6366f1;">', unsafe_allow_html=True)
+        st.markdown('<span class="section-badge" style="background:rgba(16, 185, 129, 0.1); color:#34d399; border-color:rgba(16, 185, 129, 0.2);">FASE 4</span><h3 style="color:#e2e8f0; margin-top:0;">📊 Multi-Domain Quality Assessment Dashboard</h3>', unsafe_allow_html=True)
         
         img_cv = np.array(cropped_img)
         img_gray = cv2.cvtColor(img_cv, cv2.COLOR_RGB2GRAY)
@@ -285,48 +303,48 @@ if uploaded_file is not None:
             st.markdown(f"""
             <div class="metric-grid-card">
                 <div class="metric-grid-label">Skor Fokus Optik</div>
-                <div class="metric-grid-value" style="color: {hasil['warna']}; text-shadow: 0 4px 15px {hasil['warna']}40;">{hasil['score']}</div>
-                <div style="color: #64748b; font-size: 0.85rem; font-weight:600;">Poin Gabungan PCD</div>
+                <div class="metric-grid-value" style="color: {hasil['warna']}; text-shadow: 0 0 25px {hasil['warna']}50;">{hasil['score']}</div>
+                <div style="color: #64748b; font-size: 0.85rem; font-weight:500;">Poin Gabungan Konvolusi & Spektrum</div>
             </div>""", unsafe_allow_html=True)
         with col_m2:
             st.markdown(f"""
             <div class="metric-grid-card">
                 <div class="metric-grid-label">Kategori Kualitas</div>
                 <div class="metric-grid-value" style="color: {hasil['warna']}; font-size: 1.8rem; padding: 0.6rem 0;">{hasil['kualitas']}</div>
-                <div style="color: #64748b; font-size: 0.85rem; font-weight:600;">Status Kelayakan</div>
+                <div style="color: #64748b; font-size: 0.85rem; font-weight:500;">Klasifikasi Ambang Batas Citra</div>
             </div>""", unsafe_allow_html=True)
         with col_m3:
             st.markdown(f"""
             <div class="metric-grid-card">
-                <div class="metric-grid-label">Distribusi Fitur</div>
-                <div style="color: #334155; font-size: 1.1rem; font-weight: 800; padding: 1.3rem 0;">{hasil['rincian']}</div>
-                <div style="color: #64748b; font-size: 0.85rem; font-weight:600;">40% Teks | 40% FFT | 20% Laplacian</div>
+                <div class="metric-grid-label">Distribusi Vektor Fitur</div>
+                <div style="color: #e2e8f0; font-size: 1.1rem; font-weight: 700; padding: 1.3rem 0; letter-spacing: 0.5px;">{hasil['rincian']}</div>
+                <div style="color: #64748b; font-size: 0.85rem; font-weight:500;">40% Teks | 40% FFT | 20% Laplacian</div>
             </div>""", unsafe_allow_html=True)
 
         # Kotak Rekomendasi 
         st.markdown(f"""
-        <div style="background-color: {hasil['warna']}10; border: 2px dashed {hasil['warna']}40; padding: 1.5rem; border-radius: 16px; margin-top: 2rem; margin-bottom: 2.5rem; text-align: center;">
-            <h5 style="margin: 0 0 0.5rem 0; color: {hasil['warna']}; font-weight: 800; font-size: 1.2rem;">💡 Kesimpulan & Saran:</h5>
-            <p style="margin: 0; color: #334155; font-size: 1.1rem; font-weight: 600;">{hasil['rekomendasi']}</p>
+        <div style="background-color: {hasil['warna']}10; border: 1px solid {hasil['warna']}30; border-left: 5px solid {hasil['warna']}; padding: 1.5rem; border-radius: 12px; margin-top: 2rem; margin-bottom: 2.5rem;">
+            <h5 style="margin: 0 0 0.4rem 0; color: {hasil['warna']}; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; font-size: 1rem;">Rekomendasi Integritas Sistem:</h5>
+            <p style="margin: 0; color: #cbd5e1; font-size: 1.05rem; font-weight: 400;">{hasil['rekomendasi']}</p>
         </div>
         """, unsafe_allow_html=True)
 
-        st.markdown("<h4 style='color:#1E293B;'>🖼️ Intip Proses di Balik Layar</h4>", unsafe_allow_html=True)
+        st.markdown("<h4 style='color:#e2e8f0; font-weight: 600;'>🖼️ Matriks Inspeksi Sinyal Citra</h4>", unsafe_allow_html=True)
         tab_crop, tab_gray, tab_pcd, tab_biner = st.tabs([
-            "🎯 Target Area (ROI)", 
-            "🌓 Grayscale", 
-            "🔮 Filter Anti-Pudar (CLAHE)", 
-            "🔠 Bentuk Teks Akhir"
+            "🎯 ROI Crop Target", 
+            "🌓 Grayscale Space", 
+            "🔮 CLAHE Enhancement & Filter", 
+            "🔠 Segmentasi Geometri"
         ])
         
         with tab_crop:
-            st.image(cropped_img, caption="Area yang Anda potong", use_container_width=True)
+            st.image(cropped_img, caption="Region of Interest (ROI) Terpilih", use_container_width=True)
         with tab_gray:
-            st.image(img_gray, caption="Gambar diubah menjadi hitam-putih murni", use_container_width=True)
+            st.image(img_gray, caption="Peta Distribusi Kecerahan Piksel Tunggal", use_container_width=True)
         with tab_pcd:
-            st.image(hasil["img_inner"], caption="Gambar dipertajam secara lokal untuk mengatasi teks pudar", use_container_width=True)
+            st.image(hasil["img_inner"], caption="Hasil Ekualisasi Histogram Adaptif Lokal (CLAHE) + Reduksi Noise", use_container_width=True)
         with tab_biner:
-            st.image(hasil["thresh_cleaned"], caption="Hasil binerisasi tempat komputer menghitung jumlah dan bentuk huruf", use_container_width=True)
+            st.image(hasil["thresh_cleaned"], caption="Hasil Ekstraksi Bentuk Karakter Siap Hitung", use_container_width=True)
             
         st.markdown('</div>', unsafe_allow_html=True)
 
@@ -334,10 +352,31 @@ else:
     st.session_state.show_results = False
 
 
-# ── Footer ──
-st.markdown("<br><br>", unsafe_allow_html=True)
+# ── Footer / About Creator (Dark Mode) ──
+st.markdown("<br><br><hr style='border: none; border-top: 1px solid rgba(255,255,255,0.05); margin-bottom: 2rem;'>", unsafe_allow_html=True)
+
+st.markdown("<h3 style='text-align: center; color: #e2e8f0; margin-bottom: 1.5rem; font-weight: 600;'>👨‍💻 About Creator</h3>", unsafe_allow_html=True)
+
+# Grid 3 Kolom untuk Profil Kreator
+col_c1, col_c2, col_c3 = st.columns(3)
+
+creators = [
+    ("Nicolas Krisna P.", "71231019"),
+    ("Yehezkiel Darren P. W.", "71231023"),
+    ("Hansel Ivano S.", "71231039")
+]
+
+for col, (name, nim) in zip([col_c1, col_c2, col_c3], creators):
+    with col:
+        st.markdown(f"""
+        <div style="background: rgba(15, 23, 42, 0.6); padding: 20px; border-radius: 16px; border-top: 4px solid #6366f1; border-bottom: 1px solid rgba(255,255,255,0.05); border-left: 1px solid rgba(255,255,255,0.05); border-right: 1px solid rgba(255,255,255,0.05); text-align: center; transition: transform 0.2s ease;">
+            <p style="margin: 0; font-weight: 700; color: #f8fafc; font-size: 1.05rem;">{name}</p>
+            <p style="margin: 5px 0 0 0; color: #818cf8; font-size: 0.9rem; font-weight: 600; letter-spacing: 1px;">NIM: {nim}</p>
+        </div>
+        """, unsafe_allow_html=True)
+
 st.markdown("""
-<div style="text-align:center; color: #94A3B8; font-size: 0.9rem; font-weight: 700; padding: 2rem 0; letter-spacing: 1px;">
-    ✨ DIBANGUN DENGAN PENUH SEMANGAT UNTUK TUGAS AKHIR PCD ✨<br>
-    <span style="font-weight:500; font-size:0.8rem;">ANGIN TAK PUNYA KTP PRO</span>
+<div style="text-align:center; color: #475569; font-size: 0.8rem; font-weight: 500; padding: 2.5rem 0 1rem 0; letter-spacing: 1px;">
+    SYSTEM DEVELOPED FOR DIGITAL IMAGE PROCESSING PROJECT<br>
+    <span style="color:#64748b;">© 2024 FTI UKDW • INFORMATIKA</span>
 </div>""", unsafe_allow_html=True)
