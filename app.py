@@ -201,7 +201,7 @@ def render_metric(label, value, sub="", color="white"):
 st.markdown("""
 <div class="main-header">
     <h1>Angin Tak Punya KTP</h1>
-    <p>Analisis Kepadatan Teks (Morfologi) & Frekuensi (FFT)</p>
+    <p>Deteksi Ketajaman Foto KTP</p>
 </div>""", unsafe_allow_html=True)
 
 
